@@ -189,42 +189,42 @@ always @(posedge CLK or posedge RST) begin
         end else begin
             case(CMD_TEMP)
                 4'd0: begin //AND
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= (OPA_TEMP & OPB_TEMP);
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
                     end else ERR <= 1'b1;
                 end
                 4'd1: begin //NAND
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= ~(OPA_TEMP & OPB_TEMP);
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
                     end else ERR <= 1'b1;
                 end
                 4'd2: begin //OR
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= OPA_TEMP | OPB_TEMP;
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
                     end else ERR <= 1'b1;
                 end
                 4'd3: begin //NOR
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= ~(OPA_TEMP | OPB_TEMP);
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
                     end else ERR <= 1'b1;
                 end
                 4'd4: begin //XOR
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= OPA_TEMP ^ OPB_TEMP;
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
                     end else ERR <= 1'b1;
                 end
                 4'd5: begin //XNOR
-                    if(VALID_TEMP) begin
+                    if(VALID_TEMP==2'b11) begin
                         RES[N-1:0] <= ~(OPA_TEMP ^ OPB_TEMP);
                         DONE <= 1;
                         {ERR,G,L,E,COUT,OFLOW} <= 6'b000000;
