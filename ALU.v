@@ -94,7 +94,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd1: begin //SUB
                     if (VALID_TEMP == 2'b11) begin
-                        RES   <= OPA_TEMP - OPB_TEMP;
+                        RES[N-1:0]   <= OPA_TEMP - OPB_TEMP;
                         COUT  <= 1'b0;
                         OFLOW <= (OPA_TEMP < OPB_TEMP);
                         {ERR, G, L, E} <= 4'b0000;
@@ -112,7 +112,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd3: begin  //SUB_CIN
                     if (VALID_TEMP == 2'b11) begin
-                        RES   <= OPA_TEMP - OPB_TEMP - CIN_TEMP;
+                        RES[N-1:0]  <= OPA_TEMP - OPB_TEMP - CIN_TEMP;
                         COUT  <= 1'b0;
                         DONE <= 1;
                         OFLOW <= ({1'b0, OPA_TEMP} < ({1'b0, OPB_TEMP} + CIN_TEMP));
@@ -130,7 +130,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd5: begin  //DEC_A
                     if (VALID_TEMP[0]) begin
-                        RES   <= OPA_TEMP - 1'b1;
+                        RES[N-1:0]  <= OPA_TEMP - 1'b1;
                         COUT  <= 1'b0;
                         DONE <= 1;
                         OFLOW <= (OPA_TEMP == 0);
@@ -148,7 +148,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd7: begin  //DEC_B
                     if (VALID_TEMP[1]) begin
-                        RES   <= OPB_TEMP - 1'b1;
+                        RES[N-1:0]<= OPB_TEMP - 1'b1;
                         COUT  <= (OPB_TEMP == 0);
                         OFLOW <= 1'b0;
                         DONE <= 1;
