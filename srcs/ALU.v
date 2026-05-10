@@ -169,7 +169,7 @@ always @(posedge CLK or posedge RST) begin
                         G <= $signed(OPA_TEMP) >  $signed(OPB_TEMP);
                         L <= $signed(OPA_TEMP) <  $signed(OPB_TEMP);
                         E <= $signed(OPA_TEMP) == $signed(OPB_TEMP);
-                        COUT <= ({1'b0, OPA_TEMP} + {1'b0, OPB_TEMP}) >> N;
+                        COUT <= 1'b0;
                     end else ERR <= 1'b1;
                 end
                 4'd12: begin //SIGNED SUB
@@ -179,7 +179,7 @@ always @(posedge CLK or posedge RST) begin
                         G <= $signed(OPA_TEMP) >  $signed(OPB_TEMP);
                         L <= $signed(OPA_TEMP) <  $signed(OPB_TEMP);
                         E <= $signed(OPA_TEMP) == $signed(OPB_TEMP);
-                        COUT <= ({1'b0, OPA_TEMP} < {1'b0, OPB_TEMP});
+                        COUT <= 1'b0;
                         OFLOW <= (OPA_TEMP[N-1] != OPB_TEMP[N-1]) && (signed_dif[N-1] != OPA_TEMP[N-1]);
                     end else ERR <= 1'b1;
                 end
