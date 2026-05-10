@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`default_nettype none
 
 module ALU #(parameter N = 8, parameter cmd = 4)(
 input wire CLK,
@@ -85,7 +84,7 @@ always @(posedge CLK or posedge RST) begin
             case (CMD_TEMP)
                 4'd0: begin //ADD
                     if (VALID_TEMP == 2'b11) begin
-                        RES   <= OPA_TEMP + OPB_TEMP;
+                        RES[N-1:0]   <= OPA_TEMP + OPB_TEMP;
                         COUT  <= ({1'b0, OPA_TEMP} + {1'b0, OPB_TEMP}) >> N;
                         OFLOW <= 1'b0;
                         {ERR, G, L, E} <= 4'b0000;
@@ -103,7 +102,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd2: begin  //ADD_CIN
                     if (VALID_TEMP == 2'b11) begin
-                        RES   <= OPA_TEMP + OPB_TEMP + CIN_TEMP;
+                        RES[N-1:0]   <= OPA_TEMP + OPB_TEMP + CIN_TEMP;
                         COUT  <= ({1'b0, OPA_TEMP} + {1'b0, OPB_TEMP} + CIN_TEMP) >> N;
                         OFLOW <= 1'b0;
                         DONE <= 1;
@@ -121,9 +120,9 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd4: begin  //INC_A
                     if (VALID_TEMP[0]) begin
-                        RES   <= OPA_TEMP + 1'b1;
+                        RES[N-1:0]   <= OPA_TEMP + 1'b1;
                         DONE <= 1;
-                        COUT  <= ({1'b0, OPA_TEMP} + 1'b1) >> N;
+                        COUT  <= 1'b0;
                         OFLOW <= 1'b0;
                         {ERR, G, L, E} <= 4'b0000;
                     end else ERR <= 1'b1;
@@ -133,14 +132,14 @@ always @(posedge CLK or posedge RST) begin
                         RES[N-1:0]  <= OPA_TEMP - 1'b1;
                         COUT  <= 1'b0;
                         DONE <= 1;
-                        OFLOW <= (OPA_TEMP == 0);
+                        OFLOW <= 1'b0;
                         {ERR, G, L, E} <= 4'b0000;
                     end else ERR <= 1'b1;
                 end
                 4'd6: begin  //INC_B
                     if (VALID_TEMP[1]) begin
-                        RES   <= OPB_TEMP + 1'b1;
-                        COUT  <= ({1'b0, OPB_TEMP} + 1'b1) >> N;
+                        RES[N-1:0]   <= OPB_TEMP + 1'b1;
+                        COUT  <= 1'b0;
                         OFLOW <= 1'b0;
                         DONE <= 1;
                         {ERR, G, L, E} <= 4'b0000;
@@ -149,7 +148,7 @@ always @(posedge CLK or posedge RST) begin
                 4'd7: begin  //DEC_B
                     if (VALID_TEMP[1]) begin
                         RES[N-1:0]<= OPB_TEMP - 1'b1;
-                        COUT  <= (OPB_TEMP == 0);
+                        COUT  <= 1'b0;
                         OFLOW <= 1'b0;
                         DONE <= 1;
                         {ERR, G, L, E} <= 4'b0000;
