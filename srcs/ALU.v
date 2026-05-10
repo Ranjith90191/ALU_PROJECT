@@ -24,13 +24,14 @@ reg [N-1:0] OPA_TEMP, OPB_TEMP;
 reg [cmd-1:0] CMD_TEMP;
 reg MODE_TEMP, CIN_TEMP;
 reg [1:0] VALID_TEMP;
+reg [1:0]PREV_INP_VALID;
 wire [N-1:0] signed_sum;
 assign signed_sum = $signed(OPA_TEMP) + $signed(OPB_TEMP);
 wire [N-1:0] signed_dif;
 assign signed_dif = $signed(OPA_TEMP) - $signed(OPB_TEMP);
 reg [1:0] count;
 wire inputs_changed;
-assign inputs_changed = (MODE != PREV_MODE || OPA != PREV_OPA || OPB != PREV_OPB || CMD != PREV_CMD || PREV_CIN != CIN);
+assign inputs_changed = (INP_VALID != PREV_INP_VALID || MODE != PREV_MODE || OPA != PREV_OPA || OPB != PREV_OPB || CMD != PREV_CMD || PREV_CIN != CIN);
 always @(posedge CLK or posedge RST) begin
     if (RST) begin
     count <= 0;
@@ -51,7 +52,8 @@ always @(posedge CLK or posedge RST) begin
     PREV_MODE <= MODE;
     PREV_CMD <= CMD;
     PREV_CIN <= CIN;
-    if ((inputs_changed || OPA != OPA_TEMP || OPB != OPB_TEMP || CMD != CMD_TEMP || MODE != MODE_TEMP || CIN != CIN_TEMP) && (count == 0 || count == 2 || (count == 1 && (!(MODE_TEMP == 1'b1 && (CMD_TEMP == 4'd9 || CMD_TEMP == 4'd10)) || CMD != CMD_TEMP)))) begin
+    PREV_INP_VALID <=INP_VALID;
+    if ((inputs_changed || OPA != OPA_TEMP || OPB != OPB_TEMP || CMD != CMD_TEMP || MODE != MODE_TEMP || CIN != CIN_TEMP || INP_VALID !=VALID_TEMP) && (count == 0 || count == 2 || (count == 1 && (!(MODE_TEMP == 1'b1 && (CMD_TEMP == 4'd9 || CMD_TEMP == 4'd10)) || CMD != CMD_TEMP)))) begin
         count <= 1; 
         OPA_TEMP <= OPA;
         OPB_TEMP <= OPB;
@@ -84,7 +86,7 @@ always @(posedge CLK or posedge RST) begin
             case (CMD_TEMP)
                 4'd0: begin //ADD
                     if (VALID_TEMP == 2'b11) begin
-                        RES[N-1:0]   <= OPA_TEMP + OPB_TEMP;
+                        RES  <= OPA_TEMP + OPB_TEMP;
                         COUT  <= ({1'b0, OPA_TEMP} + {1'b0, OPB_TEMP}) >> N;
                         OFLOW <= 1'b0;
                         {ERR, G, L, E} <= 4'b0000;
@@ -164,7 +166,7 @@ always @(posedge CLK or posedge RST) begin
                 4'd11: begin //SIGNED ADDITION
                     if (VALID_TEMP == 2'b11) begin
                         DONE <= 1;
-                        RES   <= $signed(OPA_TEMP) + $signed(OPB_TEMP);
+                        RES[N-1:0]   <= $signed(OPA_TEMP) + $signed(OPB_TEMP);
                         OFLOW <= (OPA_TEMP[N-1] == OPB_TEMP[N-1]) && (signed_sum[N-1] != OPA_TEMP[N-1]);
                         G <= $signed(OPA_TEMP) >  $signed(OPB_TEMP);
                         L <= $signed(OPA_TEMP) <  $signed(OPB_TEMP);
@@ -174,7 +176,7 @@ always @(posedge CLK or posedge RST) begin
                 end
                 4'd12: begin //SIGNED SUB
                     if (VALID_TEMP == 2'b11) begin
-                        RES <= $signed(OPA_TEMP) - $signed(OPB_TEMP);
+                        RES[N-1:0] <= $signed(OPA_TEMP) - $signed(OPB_TEMP);
                         DONE <= 1;
                         G <= $signed(OPA_TEMP) >  $signed(OPB_TEMP);
                         L <= $signed(OPA_TEMP) <  $signed(OPB_TEMP);
