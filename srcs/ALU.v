@@ -14,9 +14,9 @@ output reg ERR,
 output reg OFLOW,
 output reg COUT,
 output reg G, L, E,
-output reg DONE,
 output reg [(N*2)-1:0] RES
 );
+reg DONE;
 reg [N-1:0] PREV_OPA, PREV_OPB;
 reg PREV_MODE, PREV_CIN;
 reg [cmd-1:0] PREV_CMD;
