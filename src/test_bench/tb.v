@@ -57,7 +57,7 @@ endtask
 task SCORECARD;
 	begin
 	#1;
-	if(RES!=RRES || ERR!=RERR || RCOUT!=COUT || OFLOW!=ROFLOW || G!=RG || L!=RL || E!=RE)begin
+	if(RES!==RRES || ERR!==RERR || RCOUT!==COUT || OFLOW!==ROFLOW || G!==RG || L!==RL || E!==RE)begin
 		$fdisplay(file_id,"TEST FAILED");
 		$fdisplay(file_id,"INP_VALID=%b MODE=%0d CMD=%0d OPA=%0d OPB=%0d CIN=%0d RESET=%0d CE=%0d",INP_VALID,MODE,CMD,OPA,OPB,CIN,RST,CE);
 		$fdisplay(file_id,"Actual Result RES=%0d ERR=%0d COUT=%0d OFLOW=%0d G=%0d L=%0d E=%0d",RES,ERR,COUT,OFLOW,G,L,E);
@@ -517,7 +517,7 @@ nop(); nop(); SCORECARD();
 DRIVE_INPUT(1'b0, 1'b1, 8'd128, 8'd127, 1'b1, 4'd12, 1'b0, 2'b11);
 nop(); nop(); SCORECARD();
 DRIVE_INPUT(1'b0, 1'b1, 8'd128, 8'd127, 1'b0, 4'd9, 1'b0, 2'b10);
-nop(); nop(); SCORECARD();
+nop(); nop(); nop();SCORECARD();
 DRIVE_INPUT(1'b0, 1'b1, 8'd128, 8'd127, 1'b0, 4'd10, 1'b0, 2'b10);
 nop(); nop(); SCORECARD();
 DRIVE_INPUT(1'b0, 1'b1, 8'd128, 8'd127, 1'b0, 4'd9, 1'b0, 2'b11);
@@ -545,6 +545,18 @@ nop(); nop(); SCORECARD();
 
 DRIVE_INPUT(1'b0, 1'b1, 8'd128, 8'd128, 1'b1, 4'd10, 1'b0, 2'b10);
 nop(); nop(); nop();SCORECARD();
+
+//SENDING INPUT IN BETWEEN THE MULTIPLICATION OPERATION
+DRIVE_INPUT(1'b0, 1'b1, 8'd2, 8'd2, 1'b1, 4'd9, 1'b0, 2'b11);
+nop(); 
+DRIVE_INPUT(1'b0, 1'b1, 8'd3, 8'd3, 1'b1, 4'd9, 1'b0, 2'b11);
+nop(); 
+DRIVE_INPUT(1'b0, 1'b1, 8'd2, 8'd2, 1'b1, 4'd9, 1'b0, 2'b11);
+nop();SCORECARD();
+nop();SCORECARD();
+nop();SCORECARD();
+nop();SCORECARD();
+
 $fclose(file_id);
 #50 $finish;
 end
